@@ -4,6 +4,8 @@ datarootdir = $(prefix)/share
 datadir = $(datarootdir)
 eselectdir = $(datadir)/eselect/modules
 moduledir = $(datadir)/shadowman
+libexecdir = $(prefix)/libexec
+CHOST = default-unknown-change-me
 
 INSTALL_MODULES_COMPILER = clang gcc posix
 INSTALL_MODULES_TOOL = ccache distcc icecc
@@ -18,6 +20,13 @@ install-eselect: compiler-shadow.eselect
 	rm -f $<.tmp
 	sed -e "s@^\(MASQ_MODULEDIR=\).*\$$@\1$(moduledir)@" $< > $<.tmp
 	install -m0644 $<.tmp "$(DESTDIR)$(eselectdir)/$<"
+	rm -f $<.tmp
+
+install-distcc-wrapper: distcc-wrapper
+	install -d "$(DESTDIR)$(libexecdir)"
+	rm -f $<.tmp
+	sed -e "s@^TUPLE=##CHOST##@TUPLE=$(CHOST)@" $< > $<.tmp
+	install -m0755 $<.tmp "$(DESTDIR)$(eselectdir)/$<"
 	rm -f $<.tmp
 
 install-modules-compiler:
