@@ -26,7 +26,7 @@ install-distcc-wrapper: distcc-wrapper
 	install -d "$(DESTDIR)$(libexecdir)"
 	rm -f $<.tmp
 	sed -e "s@^TUPLE=##CHOST##@TUPLE=$(CHOST)@" $< > $<.tmp
-	install -m0755 $<.tmp "$(DESTDIR)$(eselectdir)/$<"
+	install -m0755 $<.tmp "$(DESTDIR)$(libexecdir)/$<"
 	rm -f $<.tmp
 
 install-modules-compiler:
