@@ -13,7 +13,7 @@ INSTALL_MODULES_TOOL = ccache distcc icecc
 all:
 	:
 
-install: install-eselect install-modules-compiler install-modules-tool
+install: install-eselect install-modules-compiler install-modules-tool install-distcc-wrapper
 
 install-eselect: compiler-shadow.eselect
 	install -d "$(DESTDIR)$(eselectdir)"
