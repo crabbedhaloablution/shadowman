@@ -1,4 +1,5 @@
 #!/bin/bash
+source /etc/profile.env
 TUPLE=##CHOST##
 DISTCC=$(type -p distcc)
 DISTCC=${DISTCC:-/usr/bin/distcc}
@@ -27,7 +28,12 @@ case "${progname}" in
 	fi
 	;;
 	clang*)
-	exec  "${DISTCC}" "${progname}" -triple "${TUPLE}" "$@"
+	exec  "${DISTCC}" "${progname}" --target="${TUPLE}" "$@"
+	;;
+	*-*-*-*-clang*)
+	TUPLE=${progname%%-clang*}
+	progname=clang${progname##*-clang}
+	exec  "${DISTCC}" "${progname}" --target="${TUPLE}" "$@"
 	;;
 	*)
 	exec "${DISTCC}" "${progname}" "$@"
