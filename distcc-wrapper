@@ -1,0 +1,35 @@
+#!/bin/bash
+TUPLE=##CHOST##
+DISTCC=$(type -p distcc)
+DISTCC=${DISTCC:-/usr/bin/distcc}
+
+progname="${0##*/}"
+case "${progname}" in
+	c99)
+	if type -p "${TUPLE}-gcc" &>/dev/null; then
+		exec "${DISTCC}" "${TUPLE}-gcc" -std=c99 "$@"
+	else
+		exec "${DISTCC}" "${progname}" "$@"
+	fi
+	;;
+	cc|gcc|c++|g++)
+	if type -p "${TUPLE}-g${progname:(-2)}" &>/dev/null; then
+		exec "${DISTCC}" "${TUPLE}-g${progname:(-2)}" "$@"
+	else
+		exec "${DISTCC}" "${progname}" "$@"
+	fi
+	;;
+	gcc-*)|g++-*)
+	if type -p "${TUPLE}-${progname}" &>/dev/null; then
+		exec "${DISTCC}" "${TUPLE}-${progname}" "$@"
+	else
+		exec "${DISTCC}" "${progname}" "$@"
+	fi
+	;;
+	clang*)
+	exec  "${DISTCC}" "${progname}" -triple "${TUPLE}" "$@"
+	;;
+	*)
+	exec "${DISTCC}" "${progname}" "$@"
+	;;
+esac
