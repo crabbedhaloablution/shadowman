@@ -19,7 +19,7 @@ case "${progname}" in
 		exec "${DISTCC}" "${progname}" "$@"
 	fi
 	;;
-	gcc-*)|g++-*)
+	gcc-*|g++-*)
 	if type -p "${TUPLE}-${progname}" &>/dev/null; then
 		exec "${DISTCC}" "${TUPLE}-${progname}" "$@"
 	else
