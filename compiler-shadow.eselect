@@ -109,7 +109,11 @@ do_update() {
 
 		local out_dir_var=MASQ_DIR_${t}
 		local out_dir=${!out_dir_var}
-		local tool_exec=$(type -P "${t}")
+		if [[ "${t}" == distcc ]]; then
+			local tool_exec=/usr/libexec/distcc-wrapper
+		else
+			local tool_exec=$(type -P "${t}")
+		fi
 		[[ ${tool_exec} ]] || die -q "Tool not found in PATH: ${t}"
 
 		mkdir -p "${out_dir}" || die
