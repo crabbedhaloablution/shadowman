@@ -28,7 +28,7 @@ case "${progname}" in
 	fi
 	;;
 	clang*)
-	if [[ " $*" != *" --target="* && " $*" != *" -target "* ]]; then
+	if args_not_target "$@"; then
 		exec  "${DISTCC}" "${progname}" --target="${TUPLE}" "$@"
 	else
 		exec  "${DISTCC}" "${progname}" "$@"
@@ -36,7 +36,7 @@ case "${progname}" in
 	;;
 	*-*-*-*-clang*)
 	if type -p "clang${progname##*-clang}" &>/dev/null && \
-	   [[ " $*" != *" --target="* && " $*" != *" -target "* ]]; then
+	   args_not_target "$@"; then
 		TUPLE=${progname%%-clang*}
 		progname=clang${progname##*-clang}
 		exec  "${DISTCC}" "${progname}" --target="${TUPLE}" "$@"
@@ -48,3 +48,11 @@ case "${progname}" in
 	exec "${DISTCC}" "${progname}" "$@"
 	;;
 esac
+
+args_not_target() {
+	(($# > 0)) || return 0
+	local arg
+	for arg in "$@"; do
+		[[ "$arg" != "--target="*  && "$arg" != "-target "* && "$arg" != "-triple "* ]] || return 1
+	done
+}
