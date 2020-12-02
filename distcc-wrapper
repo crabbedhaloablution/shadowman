@@ -5,6 +5,15 @@ DISTCC=$(type -p distcc)
 DISTCC=${DISTCC:-/usr/bin/distcc}
 
 progname="${0##*/}"
+
+args_not_target() {
+	(($# > 0)) || return 0
+	local arg
+	for arg in "$@"; do
+		[[ "$arg" != "--target="*  && "$arg" != "-target "* && "$arg" != "-triple "* ]] || return 1
+	done
+}
+
 case "${progname}" in
 	c99)
 	if type -p "${TUPLE}-gcc" &>/dev/null; then
@@ -49,10 +58,3 @@ case "${progname}" in
 	;;
 esac
 
-args_not_target() {
-	(($# > 0)) || return 0
-	local arg
-	for arg in "$@"; do
-		[[ "$arg" != "--target="*  && "$arg" != "-target "* && "$arg" != "-triple "* ]] || return 1
-	done
-}
