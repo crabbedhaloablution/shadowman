@@ -28,15 +28,15 @@ case "${progname}" in
 	fi
 	;;
 	clang*)
-	if [[ "$*" != *"--target="* && "$*" != *"-target "* ]]; then
+	if [[ " $*" != *" --target="* && " $*" != *" -target "* ]]; then
 		exec  "${DISTCC}" "${progname}" --target="${TUPLE}" "$@"
 	else
 		exec  "${DISTCC}" "${progname}" "$@"
 	fi
 	;;
 	*-*-*-*-clang*)
-	if	type -p "clang${progname##*-clang}" &>/dev/null && \
-		[[ "$*" != *"--target="* && "$*" != *"-target "* ]]; then
+	if type -p "clang${progname##*-clang}" &>/dev/null && \
+	   [[ " $*" != *" --target="* && " $*" != *" -target "* ]]; then
 		TUPLE=${progname%%-clang*}
 		progname=clang${progname##*-clang}
 		exec  "${DISTCC}" "${progname}" --target="${TUPLE}" "$@"
