@@ -7,10 +7,23 @@ DISTCC=${DISTCC:-/usr/bin/distcc}
 progname="${0##*/}"
 
 args_not_target() {
-	(($# > 0)) || return 0
+	[[ $# -gt 0 ]] || return 0
 	local arg
 	for arg in "$@"; do
-		[[ "$arg" != "--target="*  && "$arg" != "-target "* && "$arg" != "-triple "* ]] || return 1
+		case "$arg" in
+			--target=*)
+				return 1
+			;;
+			-target)
+				return 1
+			;;
+			-triple=*)
+				return 1
+			;;
+			-triple)
+				return 1
+			;;
+		esac
 	done
 }
 
@@ -38,7 +51,7 @@ case "${progname}" in
 	;;
 	clang*)
 	if args_not_target "$@"; then
-		exec  "${DISTCC}" "${progname}" --target="${TUPLE}" "$@"
+		exec  "${DISTCC}" "${progname}" -target "${TUPLE}" "$@"
 	else
 		exec  "${DISTCC}" "${progname}" "$@"
 	fi
@@ -48,7 +61,7 @@ case "${progname}" in
 	   args_not_target "$@"; then
 		TUPLE=${progname%%-clang*}
 		progname=clang${progname##*-clang}
-		exec  "${DISTCC}" "${progname}" --target="${TUPLE}" "$@"
+		exec  "${DISTCC}" "${progname}" -target "${TUPLE}" "$@"
 	else
 		exec  "${DISTCC}" "${progname}" "$@"
 	fi
